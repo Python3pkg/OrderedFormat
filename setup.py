@@ -3,15 +3,15 @@ from setuptools import setup, find_packages, Command
 from codecs import open
 from os import path
 
-from version import *
+version = "0.0.1"
 
 here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
-with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
-    requires = f.readlines()
+# with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
+#     requires = f.readlines()
 
 setup(
     name='OrderedFormat',
@@ -28,6 +28,6 @@ setup(
     ],
     keywords='',
     packages=find_packages(exclude=['tests']),
-    install_requires=requires,
+    install_requires=["pyyaml", "yamlordereddictloader", "six"],
     tests_requires=["nose"],
 )

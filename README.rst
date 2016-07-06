@@ -1,33 +1,37 @@
 OrderedFormat
 =============
 
-..image:: https://travis-ci.org/Himenon/OrderedFormat.svg?branch=master
+.. image:: https://travis-ci.org/Himenon/OrderedFormat.svg?branch=master
     :target: https://travis-ci.org/Himenon/OrderedFormat
+
 
 Requirements
 ------------
 
 Python 2.7 and 3.
 
-Installation
-------------
+From a dictionary type, this can acquire a value in order of a methodical keys.
 
-    pip install OrderedFormat
+Example
+-------
 
+    from OrderedFormat get_ordered_keys, kflatten
 
-Usage
------
+    yml_data = """
+        human:
+          name: John
+          age: 22
+        """
 
-::: python
+        key_data = """
+        human:
+        - name
+        - age
+        - name
+        """
 
+        ordered_keys = get_ordered_keys(key_data=key_data, ext="yml")
 
-    ordered_keys = get_ordered_keys(key_data=key_data, ext="yml")
-    data = kflatten(yml_data, ordered_keys, type="yaml")
+        ordered_data = kflatten(yml_data, ordered_keys, type="yaml")
 
-
-
-Changelog
----------
-
-
-
+        # ordered_data = ("John", "John", 22, "John")

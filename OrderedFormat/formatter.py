@@ -16,21 +16,32 @@ def iter_depth(arr):
         return iter_depth(list(arr))
     return 0
 
-def load_dict_file(name):
+
+def load_dict_val(name):
+    ext = os.path.splitext(name)[1]
     with open(name, 'r') as stream:
-        return yaml.load(stream.read())
+        return parse_string_to_dict(stream.read(), ext)
+
 
 def parse_string_to_dict(string_data, type=None):
     if not isinstance(string_data, str):
         raise ValueError("Input Data is not 'String'")
     if not type:
         raise ValueError("Not found data type. You must choose type 'yaml' or 'json'")
-    if type == "yaml":
+
+    json_flag = re.match("\.json|json", type)
+    yaml_flag = re.match("yml|\.yml|yaml|\.yaml", type)
+
+    if yaml_flag:
         return yaml.load(string_data)
-    if type == "json":
+    if json_flag:
         return json.loads(string_data)
 
-def get_ordered_keys(key_data, filename=None, ext=None):
+
+def load_ordered_keys(key_data, filename=None, ext=None):
+
+    if key_data and filename:
+        return -1
 
     if filename:
         if not os.path.exists(filename):
@@ -55,6 +66,7 @@ def get_ordered_keys(key_data, filename=None, ext=None):
             return json.JSONDecoder(object_pairs_hook=OrderedDict).decode(stream.read())
     if yaml_flag:
         return yaml.load(open(filename), Loader=yamlordereddictloader.Loader)
+
 
 def kflatten(dict_value, ordered_keys, type=None):
     if isinstance(dict_value, str):
@@ -82,7 +94,9 @@ def kflatten(dict_value, ordered_keys, type=None):
     else:
         return tuple(ordered_and_flatten_list)
 
+
 if __name__ == '__main__':
-    ordered_keys = get_ordered_keys(None, filename="../tests/src/test_keys.yml")
-    dict_data = load_dict_file("../tests/src/test_data.yml")
+    ordered_keys = load_ordered_keys(None, filename="../tests/src/test_keys.yml")
+    dict_data = load_dict_val("../tests/src/test_data.yml")
+
     print(kflatten(dict_data, ordered_keys))

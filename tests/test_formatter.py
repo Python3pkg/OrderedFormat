@@ -1,7 +1,6 @@
 from unittest import TestCase
 from nose.tools import ok_, eq_
 from OrderedFormat.formatter import *
-import six
 
 class TestOrderedFormat(TestCase):
 
@@ -34,7 +33,7 @@ class TestOrderedFormat(TestCase):
         - name
         """
 
-        ordered_keys = get_ordered_keys(key_data=key_data, ext="yml")
+        ordered_keys = load_ordered_keys(key_data=key_data, ext="yml")
         data = kflatten(yml_data, ordered_keys, type="yaml")
 
         eq_(data[0], "John")

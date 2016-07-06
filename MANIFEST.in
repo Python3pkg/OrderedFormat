@@ -1,4 +1,4 @@
 include README.rst
-include otx.ini
+include tox.ini
 include setup.cfg
-recrsive-include tests *
+recursive-include tests *

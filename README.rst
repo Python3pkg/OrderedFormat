@@ -9,7 +9,7 @@ Ordered value getter from Dictionary type value.
 Requirements
 ============
 
-Python 2.6 upper and 3.x
+Python 2.7 upper and 3.x
 
 From a dictionary type, this can acquire a value in order of a methodical keys.
 

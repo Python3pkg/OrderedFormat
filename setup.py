@@ -1,8 +1,7 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Command
 
 from codecs import open
 from os import path
-import re
 
 from version import *
 
@@ -15,11 +14,11 @@ with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
     requires = f.readlines()
 
 setup(
-    name='OrderedFormatter',
+    name='OrderedFormat',
     version=version,
     long_description=long_description,
     url='https://github.com/Himenon/OrderedFormat',
-    author='Himenon',
+    author='K.Himeno',
     author_email='k.himeno314@gmail.com',
     license='MIT',
     classifiers=[
@@ -28,7 +27,7 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
     keywords='',
-    packages=find_packages(exclude=['tests*']),
+    packages=find_packages(exclude=['tests']),
     install_requires=requires,
-    tests_requires=["nose"]
+    tests_requires=["nose"],
 )

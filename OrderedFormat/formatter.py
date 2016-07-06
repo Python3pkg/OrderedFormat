@@ -1,4 +1,5 @@
 import os
+import six
 import re
 import json
 import yaml
@@ -6,29 +7,42 @@ import yamlordereddictloader
 from itertools import chain
 from collections import OrderedDict
 
-def iterdepth(arr):
+def iter_depth(arr):
     if isinstance(arr, dict) and arr:
-        return 1 + max(iterdepth(arr[a]) for a in arr)
+        return 1 + max(iter_depth(arr[a]) for a in arr)
     if isinstance(arr, list) and arr:
-        return 1 + max(iterdepth(a) for a in arr)
+        return 1 + max(iter_depth(a) for a in arr)
     if isinstance(arr, tuple) and arr:
-        return iterdepth(list(arr))
+        return iter_depth(list(arr))
     return 0
 
-def getorderedkeys(key_data, file_path=None, ext=None):
+def load_dict_file(name):
+    with open(name, 'r') as stream:
+        return yaml.load(stream.read())
 
-    if file_path:
-        if not os.path.exists(file_path):
-            raise IOError("Not found '{file_path}'".format(file_path=file_path))
+def parse_string_to_dict(string_data, type=None):
+    if not isinstance(string_data, str):
+        raise ValueError("Input Data is not 'String'")
+    if not type:
+        raise ValueError("Not found data type. You must choose type 'yaml' or 'json'")
+    if type == "yaml":
+        return yaml.load(string_data)
+    if type == "json":
+        return json.loads(string_data)
+
+def get_ordered_keys(key_data, filename=None, ext=None):
+
+    if filename:
+        if not os.path.exists(filename):
+            raise IOError("Not found '{filename}'".format(filename=filename))
         if not ext:
-            ext = os.path.splitext(file_path)[1]
+            ext = os.path.splitext(filename)[1]
 
     if not ext:
         raise ValueError("You must set value for 'ext' field!")
 
     json_flag = re.match("\.json|json", ext)
     yaml_flag = re.match("yml|\.yml|yaml|\.yaml", ext)
-    print(json_flag, yaml_flag)
 
     if isinstance(key_data, str):
         if json_flag:
@@ -37,17 +51,23 @@ def getorderedkeys(key_data, file_path=None, ext=None):
             return yaml.load(key_data, Loader=yamlordereddictloader.Loader)
 
     if json_flag:
-        with open(file_path) as stream:
+        with open(filename) as stream:
             return json.JSONDecoder(object_pairs_hook=OrderedDict).decode(stream.read())
     if yaml_flag:
-        return yaml.load(open(file_path), Loader=yamlordereddictloader.Loader)
+        return yaml.load(open(filename), Loader=yamlordereddictloader.Loader)
 
-def kflatten(dict_value, ordered_keys):
+def kflatten(dict_value, ordered_keys, type=None):
+    if isinstance(dict_value, str):
+        dict_value = parse_string_to_dict(dict_value, type=type)
+
     ordered_and_flatten_list = []
-
     def _kflatten(_dict_value, _ordered_keys):
         if isinstance(_ordered_keys, OrderedDict):
-            map(lambda sub_key: _kflatten(_dict_value[sub_key], _ordered_keys[sub_key]), _ordered_keys)
+            # Todo Python 2, 3
+            if six.PY2:
+                map(lambda sub_key: _kflatten(_dict_value[sub_key], _ordered_keys[sub_key]), _ordered_keys)
+            else:
+                list(map(lambda sub_key: _kflatten(_dict_value[sub_key], _ordered_keys[sub_key]), _ordered_keys))
         if isinstance(_ordered_keys, list):
             for key in _ordered_keys:
                 if isinstance(key, OrderedDict):
@@ -57,30 +77,12 @@ def kflatten(dict_value, ordered_keys):
 
     _kflatten(dict_value, ordered_keys)
 
-    if iterdepth(ordered_and_flatten_list) > 1:
+    if iter_depth(ordered_and_flatten_list) > 1:
         return tuple(chain.from_iterable(ordered_and_flatten_list))
     else:
         return tuple(ordered_and_flatten_list)
 
-
 if __name__ == '__main__':
-
-    yml_data = yaml.load("""
-    human:
-      name: John
-      age: 22
-    """)
-
-    print(yml_data)
-
-    data = """
-    human:
-    - name
-    - name
-    """
-
-    key_data = getorderedkeys(key_data=data, ext=".yml")
-
-    print(key_data)
-
-    print(kflatten(yml_data, key_data))
+    ordered_keys = get_ordered_keys(None, filename="../tests/src/test_keys.yml")
+    dict_data = load_dict_file("../tests/src/test_data.yml")
+    print(kflatten(dict_data, ordered_keys))

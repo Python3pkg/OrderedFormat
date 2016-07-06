@@ -27,21 +27,21 @@ QuickStart ::
 
     import OrderedFormat.formatter as odf
 
-    yml_data = """
+    yml_txt_data = """
     human:
       name: John
       age: 22
     """
 
-    key_data = """
+    yml_key_txt = """
     human:
     - name
     - age
     - name
     """
 
-    ordered_keys = odf.load_ordered_keys(None, raw_txt=key_data, load_type="yaml")
-    ordered_data = odf.kflatten(yml_data, raw_keys, load_type="yaml")
+    ordered_keys = odf.load_ordered_keys(None, raw_txt=yml_key_txt, load_type="yaml")
+    ordered_data = odf.kflatten(yml_txt_data, ordered_keys, load_type="yaml")
 
     # ordered_data = ("John", "John", 22, "John")
 

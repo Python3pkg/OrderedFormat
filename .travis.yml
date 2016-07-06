@@ -1,13 +1,17 @@
 sudo: false
 
 language: python
+python: 3.5
 
-python:
-- "2.7"
-- "3.5"
-
+env:
+  matrix:
+   - TOXENV=py26
+   - TOXENV=py27
+   - TOXENV=py33
+   - TOXENV=py34
 install:
   - pip install tox
-
-script:
-  - tox
+  - if test "$TOXENV" = py34 ; then pip install coveralls ; fi
+script: tox
+after_script:
+  - if test "$TOXENV" = py34 ; then coveralls ; fi

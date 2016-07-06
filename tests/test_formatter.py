@@ -33,8 +33,8 @@ class TestOrderedFormat(TestCase):
         - name
         """
 
-        ordered_keys = load_ordered_keys(key_data=key_data, ext="yml")
-        data = kflatten(yml_data, ordered_keys, type="yaml")
+        ordered_keys = load_ordered_keys(None, raw_txt=key_data, load_type="yml")
+        data = kflatten(yml_data, ordered_keys, load_type="yaml")
 
         eq_(data[0], "John")
         eq_(data[1], "John")

@@ -1,0 +1,8 @@
+[run]
+branch = True
+omit = '*/site-packages/*'
+
+[report]
+omit =
+    */python?.?/*
+    */site-packages/nose/*

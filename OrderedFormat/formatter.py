@@ -74,13 +74,13 @@ def kflatten(dict_value, ordered_keys, load_type=None):
     def _kflatten(_dict_value, _ordered_keys):
         if isinstance(_ordered_keys, OrderedDict):
             if six.PY2:
-                map(lambda sub_key: _kflatten(_dict_value[sub_key], _ordered_keys[sub_key]), _ordered_keys)
-            else:
                 list(map(lambda sub_key: _kflatten(_dict_value[sub_key], _ordered_keys[sub_key]), _ordered_keys))
+            else:
+                list([_kflatten(_dict_value[sub_key], _ordered_keys[sub_key]) for sub_key in _ordered_keys])
         if isinstance(_ordered_keys, list):
             for key in _ordered_keys:
                 if isinstance(key, OrderedDict):
-                    map(lambda sub_key: _kflatten(_dict_value[sub_key], key[sub_key]), key)
+                    list(map(lambda sub_key: _kflatten(_dict_value[sub_key], key[sub_key]), key))
                 if isinstance(key, str):
                     ordered_and_flatten_list.append(_dict_value[key])
 
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     ordered_keys = load_ordered_keys("../tests/src/test_keys.yml")
     dict_data = load_dict_val("../tests/src/test_data.yml")
 
-    print(kflatten(dict_data, ordered_keys))
+    print((kflatten(dict_data, ordered_keys)))
 
     yml_data = """
     human:
